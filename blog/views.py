@@ -1,5 +1,5 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from django.utils import timezone
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.decorators import login_required
@@ -34,6 +34,9 @@ class PostCreateView(CreateView, LoginRequiredMixin):
     redirect_field_name = 'blog/post_detail.html'
     form_class = PostForm
 
+    def get_success_url(self):
+        return reverse('post_list')
+
 
 class PostUpdateView(UpdateView, LoginRequiredMixin):
     login_url = '/login/'
@@ -55,7 +58,7 @@ class DraftListView(LoginRequiredMixin, ListView):
     def get_queryset(self):
         return Post.objects \
             .filter(published_date__isnull=True) \
-            .order_by('created_date')
+            .order_by('create_date')
 
 
 @login_required
